@@ -35,17 +35,18 @@ class App:
         self.clickNumber = 0
 
 
-        self.blue_x1 = 0
+        self.blue_x1 = 400
         self.blue_y1 = 0
 
         self.blue_x2 = 800
         self.blue_y2 = 450
 
         self.window:  tk.Tk = window
-        self.window.geometry("1200x1200")
+        # self.window.geometry("1200x1200")
         self.window.title ("People Counting")
         self.canvas = tk.Canvas(self.window, width = 800, height = 450, background = "white")
-        self.canvas.pack(pady=30)
+        # tk.Label(self.window, text = "").grid(row = 0, rowspan = 50)
+        self.canvas.grid(row = 0, column = 0, columnspan = 10)
         (grabbed, frame) = self.camera.read()
         if grabbed:
             self.currentFrame = imutils.resize(frame, width=800)
@@ -54,21 +55,29 @@ class App:
             self.canvas.create_image(0, 0, image=self.displayFrame, anchor='nw')
 
         label = tk.Label(self.window, text="Enter margin of error: ")
-        label.pack()
+        label.grid(row = 1, pady = 30)
 
         self.input = tk.Entry(window)
         self.btn = tk.Button(self.window, text=self.ctrlButtonText[self.videoStatus], width=20, height =2, command = self.onClick)
-        self.input.pack(pady = 10)
-        self.btn.pack()
-
-        row = tk.Frame(self.window)
-        row.pack(fill=tk.X, pady=5)
-        self.btnBlueLine = tk.Button(row, text="Draw Blue",width=20, height =2,command = self.startDrawingBlue )
-        self.clearbtn = tk.Button(row, text="Redraw lines", width=20, height =2,command = self.clearSetting)
+        self.input.grid(row = 1 , column = 1)
+        self.btn.grid(row = 1, rowspan =2 ,column =3, ipady = 10, ipadx = 40, columnspan = 5)
+        self.btnBlueLine = tk.Button(self.window, text="Draw Line",width=20, height =2,command = self.startDrawingBlue )
+        self.clearbtn = tk.Button(self.window, text="Redraw Line", width=20, height =2,command = self.clearSetting)
 
 
-        self.btnBlueLine.pack(side = tk.LEFT)
-        self.clearbtn.pack(side = tk.RIGHT, padx =100)
+        self.btnBlueLine.grid(row = 2, pady = 20)
+        self.clearbtn.grid(row = 2,column = 1 )
+
+
+        self.window.grid_columnconfigure(0, minsize=250)
+        self.displayDist = tk.Label(self.window, text="Current distance to the line :   None")
+        self.displayDist.grid(row = 3, pady = 20, padx = 7, sticky = "W")
+        # self.displayDist.grid(row = 3, pady =20,  padx = 7, sticky = "W")
+
+        self.displayDirection = tk.Label(self.window,  text="Predicted direction :   None")
+        # self.displayDirection.pack()
+        self.displayDirection.grid(row=4, padx = 7, sticky = "W", ipady = 20)
+
         self.window.mainloop()
 
 
@@ -79,6 +88,7 @@ class App:
         if grabbed:
             self.currentFrame = imutils.resize(frame, width=800)
             shouldPause = self.processFrame()
+
             self.displayFrame = ImageTk.PhotoImage(Image.fromarray(self.currentFrame))
             if self.imageOnCanvas is None:
                 self.canvas.create_image(0,0,image = self.displayFrame, anchor ='nw')
@@ -162,6 +172,11 @@ class App:
                 cv2.circle(self.currentFrame, rectagleCenterPont, 1, (0, 0, 255), 5)
                 ifBlueLine = self.intersection((x + x + w) // 2, (y + y + h) // 2, (self.blue_x1,self.blue_y1), (self.blue_x2,self.blue_y2), self.pre_cords, self.marginError)
                 isGoingDown = self.direction(rectagleCenterPont, self.pre_cords)
+
+                direction = "Down"
+                if not isGoingDown:
+                    direction = "Up  "
+                self.displayDirection['text'] = "Predicted direction :  " + direction
                 isLeft = self.isLeft(((x + x + w) // 2, (y + y + h) // 2), (self.blue_x1,self.blue_y1), (self.blue_x2,self.blue_y2))
 
                 if ifBlueLine:
@@ -207,6 +222,9 @@ class App:
         c = (p1[1] * p2[0] - p1[0] * p2[1])
         sqrt_val = a ** 2 + b ** 2
         val = abs((a * x + b * y + c) / math.sqrt(sqrt_val))
+
+        display = str(round(val,2))
+        self.displayDist['text'] = "Current distance to the line :  " + display
         return val
 
     def intersection(self, x, y, p1, p2, pre_coords, margin):
