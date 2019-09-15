@@ -181,23 +181,15 @@ class App:
 
                 if ifBlueLine:
                     shouldPause = True
-                    if self.isDown is None:
-                        if isGoingDown:
-                            self.down +=1
-                            self.isDown = False
-                        else:
-                            self.up +=1
-                            self.isDown = True
-                    else:
-                        if (self.isDown and isGoingDown)  or (isGoingDown and not isLeft):
-                            self.down +=1
-                            self.isDown = False
-                        elif (not self.isDown and not isGoingDown)or (not isGoingDown and  isLeft):
-                            self.up +=1
-                            self.isDown = True
-                        print("iSDown: " ,self.isDown)
-                        print("isLeft " , isLeft)
-                        print("directio: " , isGoingDown)
+                    if  (isGoingDown ):
+                        self.down +=1
+                        self.isDown = False
+                    elif  (not isGoingDown):
+                        self.up +=1
+                        self.isDown = True
+                    print("iSDown: " ,self.isDown)
+                    print("isLeft " , isLeft)
+                    print("directio: " , isGoingDown)
 
 
 
