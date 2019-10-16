@@ -5,7 +5,7 @@ A program that reads in a video and counts the number of times people walking up
 This program is for upskilling purpose, it contains two python files. Both files use the same logic to implement the counting function and use Tkinter to implement the GUI.
 
 
-### peopleCounterSingleLine.py
+## peopleCounterSingleLine.py
 
 In this file, the program takes a video and counts the number of times people walking up/down across a single line.The GUI allows you to:
 
@@ -20,7 +20,7 @@ In this file, the program takes a video and counts the number of times people wa
 ![GUI](https://i.imgur.com/U3g7yc8.png)
 
 
-### peopleCounterWithGUI.py
+## peopleCounterWithGUI.py
 
 In this file, you need to draw two lines to enable the program counting people going up/down across the lines. 
 
